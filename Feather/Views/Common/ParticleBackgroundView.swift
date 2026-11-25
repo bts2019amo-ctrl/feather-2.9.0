@@ -33,7 +33,7 @@ struct ParticleBackgroundView: View {
                 let rect = CGRect(origin: .zero, size: size)
 
                 // Deep dark background with a restrained blue-violet atmospheric glow.
-                context.fill(Path(rect), with: .color(Color(red: 0.004, green: 0.006, blue: 0.018).opacity(0.34)))
+                context.fill(Path(rect), with: .color(Color(red: 0.004, green: 0.006, blue: 0.018).opacity(0.035)))
                 let center = CGPoint(
                     x: size.width * (0.50 + 0.12 * CGFloat(sin(time * 0.08))),
                     y: size.height * (0.42 + 0.16 * CGFloat(cos(time * 0.07)))
