@@ -64,8 +64,9 @@ struct ServerView: View {
 						Text(_serverMethods[index]).tag(index)
 					}
 				}
+				.disabled(true)
 				Toggle(.localized("Only use localhost address"), systemImage: "lifepreserver", isOn: $_ipFix)
-					.disabled(_serverMethod != 1)
+					.disabled(true)
 			}
 			
 			Section {
@@ -88,6 +89,10 @@ struct ServerView: View {
 						}
 					}
 				}
+			}
+			.onAppear {
+				_serverMethod = 1
+				_ipFix = true
 			}
 		}
 	}

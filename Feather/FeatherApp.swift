@@ -12,6 +12,16 @@ import OSLog
 
 @main
 struct FeatherApp: App {
+	init() {
+		// Interface fixa em português brasileiro.
+		UserDefaults.standard.set(["pt-BR"], forKey: "AppleLanguages")
+		UserDefaults.standard.set("pt_BR", forKey: "AppleLocale")
+		// Instalação fixa: servidor semi-local usando exclusivamente localhost.
+		UserDefaults.standard.set(0, forKey: "Feather.installationMethod")
+		UserDefaults.standard.set(1, forKey: "Feather.serverMethod")
+		UserDefaults.standard.set(true, forKey: "Feather.ipFix")
+	}
+
 	@UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
 	
 	let heartbeat = HeartbeatManager.shared
