@@ -47,6 +47,8 @@ $(PLATFORMS): deps
 	# Remove stale source/configuration names from the distributable app bundle.
 	find _build/Payload/Lopfinder.app -type f -name 'thewonderofyou.Feather*' -delete
 	rm -f _build/Payload/Lopfinder.app/Feather.xcconfig
+	# Keep only the user's transparent icon among loose PNG resources.
+	find _build/Payload/Lopfinder.app -type f -name '*.png' ! -name 'lopfinder_extension.png' -delete
 	chmod -R 0755 _build/Payload/Lopfinder.app
 	codesign --force --sign - --timestamp=none _build/Payload/Lopfinder.app
 	cp deps/* _build/Payload/Lopfinder.app/ || true
