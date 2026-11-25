@@ -36,7 +36,7 @@ jobs:
       - name: Extract Version
         id: get_version
         run: |
-          VERSION=$(/usr/libexec/PlistBuddy -c "Print CFBundleShortVersionString" _build/Payload/*.app/Info.plist)
+          VERSION=$(awk -F= '/^FEATHER_PROJECT_VERSION[[:space:]]*=/{gsub(/[[:space:]]/, "", $2); print $2}' Feather.xcconfig)
           echo "VERSION=${VERSION}" >> $GITHUB_ENV
 
       - name: Create Release
