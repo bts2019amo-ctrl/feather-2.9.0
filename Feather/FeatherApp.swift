@@ -32,6 +32,10 @@ struct FeatherApp: App {
 	var body: some Scene {
 		WindowGroup {
 			ZStack {
+				// Background layer: particles stay behind every interactive view.
+				ParticleBackgroundView()
+					.allowsHitTesting(false)
+
 				VStack {
 					DownloadHeaderView(downloadManager: downloadManager)
 						.transition(.move(edge: .top).combined(with: .opacity))
@@ -41,10 +45,6 @@ struct FeatherApp: App {
 						.transition(.move(edge: .top).combined(with: .opacity))
 				}
 				.animation(.smooth, value: downloadManager.manualDownloads.description)
-
-				ParticleBackgroundView()
-					.opacity(0.72)
-					.allowsHitTesting(false)
 			}
 			.background(Color.clear)
 			.onReceive(NotificationCenter.default.publisher(for: .heartbeatInvalidHost)) { _ in

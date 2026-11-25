@@ -10,8 +10,6 @@ struct TabbarView: View {
 
 	var body: some View {
 		ZStack {
-			ParticleBackgroundView()
-
 			TabView(selection: $selectedTab) {
 				ForEach(TabEnum.defaultTabs, id: \.hashValue) { tab in
 					TabEnum.view(for: tab)

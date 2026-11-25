@@ -12,8 +12,6 @@ struct ExtendedTabbarView: View {
 
 	var body: some View {
 		ZStack {
-			ParticleBackgroundView()
-
 			TabView {
 				ForEach(TabEnum.defaultTabs, id: \.hashValue) { tab in
 					Tab(tab.title, systemImage: tab.icon) {
