@@ -39,7 +39,7 @@ struct InstallationView: View {
 			}
 		}
 			.onAppear { _installationMethod = 0 }
-			.onChange(of: _installationMethod) { _installationMethod = 0 }
+			.onChange(of: _installationMethod) { _ in _installationMethod = 0 }
 		.alert(.localized("Advanced Installation Method"), isPresented: $_showMethodChangedAlert) {
 			Button(.localized("Switch Back"), role: .destructive) {
 				_installationMethod = 0
