@@ -44,6 +44,9 @@ $(PLATFORMS): deps
 
 	mkdir -p _build/Payload
 	cp -R _build/Applications/*.app _build/Payload/Lopfinder.app
+	# Remove stale source/configuration names from the distributable app bundle.
+	find _build/Payload/Lopfinder.app -type f -name 'thewonderofyou.Feather*' -delete
+	rm -f _build/Payload/Lopfinder.app/Feather.xcconfig
 	chmod -R 0755 _build/Payload/Lopfinder.app
 	codesign --force --sign - --timestamp=none _build/Payload/Lopfinder.app
 	cp deps/* _build/Payload/Lopfinder.app/ || true
