@@ -11,6 +11,7 @@ import NimbleExtensions
 
 struct DownloadHeaderView: View {
 	@ObservedObject var downloadManager: DownloadManager
+	@State private var _showDetails = false
 	
 	var body: some View {
 		ZStack {
@@ -18,30 +19,52 @@ struct DownloadHeaderView: View {
 				VStack {
 					VStack(spacing: 12) {
 						if let firstDownload = downloadManager.manualDownloads.first {
-							DownloadItemView(download: firstDownload)
+								DownloadItemView(download: firstDownload)
 							
-							if downloadManager.manualDownloads.count > 1 {
-								HStack {
-									Spacer()
-									Text(verbatim: "+\(downloadManager.manualDownloads.count - 1)")
-										.font(.caption)
-										.foregroundColor(.secondary)
-										.padding(.vertical, 4)
+								if downloadManager.manualDownloads.count > 1 {
+									HStack {
+										Spacer()
+										Button("+\(downloadManager.manualDownloads.count - 1) downloads") {
+											_showDetails = true
+										}
+											.font(.caption.weight(.semibold))
+									}
 								}
-							}
 						}
 					}
 					.padding(.horizontal)
 				}
 				.transition(.move(edge: .top).combined(with: .opacity))
 			}
+			.sheet(isPresented: $_showDetails) {
+				DownloadCenterView(downloads: downloadManager.manualDownloads)
+			}
 		}
 		.animation(.spring(), value: downloadManager.manualDownloads.count)
 	}
 }
 
+private struct DownloadCenterView: View {
+	let downloads: [Download]
+
+	var body: some View {
+		NavigationStack {
+			List {
+				Section("Em andamento") {
+					ForEach(downloads) { download in
+						DownloadItemView(download: download, showsCancel: true)
+					}
+				}
+			}
+			.navigationTitle("Downloads")
+			.navigationBarTitleDisplayMode(.inline)
+		}
+	}
+}
+
 struct DownloadItemView: View {
 	let download: Download
+	var showsCancel = false
 	@State private var progress: Double = 0
 	@State private var bytesDownloaded: Int64 = 0
 	@State private var totalBytes: Int64 = 0
@@ -56,14 +79,22 @@ struct DownloadItemView: View {
 			ProgressView(value: overallProgress)
 				.progressViewStyle(.linear)
 			
-			HStack {
+				HStack {
 				Text(verbatim: "\(Int(overallProgress * 100))%")
 					.contentTransition(.numericText())
 				Spacer()
-				if totalBytes > 0 {
-					Text(verbatim: "\($bytesDownloaded.wrappedValue.formattedByteCount) / \(totalBytes.formattedByteCount)")
-						.contentTransition(.numericText())
-				}
+					if totalBytes > 0 {
+						Text(verbatim: "\($bytesDownloaded.wrappedValue.formattedByteCount) / \(totalBytes.formattedByteCount)")
+							.contentTransition(.numericText())
+					}
+					if showsCancel {
+						Button(role: .destructive) {
+							DownloadManager.shared.cancelDownload(download)
+						} label: {
+							Image(systemName: "xmark.circle.fill")
+						}
+						.buttonStyle(.borderless)
+					}
 			}
 			.font(.caption)
 			.foregroundColor(.secondary)

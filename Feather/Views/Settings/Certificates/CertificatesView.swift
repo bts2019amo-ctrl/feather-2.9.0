@@ -14,9 +14,11 @@ struct CertificatesView: View {
 	
 	@State private var _isAddingPresenting = false
 	@State private var _isRenamingPresenting = false
-	@State private var _isSelectedInfoPresenting: CertificatePair?
-	@State private var _certToRename: CertificatePair?
-	@State private var _newNickname: String = ""
+		@State private var _isSelectedInfoPresenting: CertificatePair?
+		@State private var _certToRename: CertificatePair?
+		@State private var _newNickname: String = ""
+		@State private var _searchText = ""
+		@State private var _showDiagnostics = false
 
 	// MARK: Fetch
 	@FetchRequest(
@@ -38,11 +40,16 @@ struct CertificatesView: View {
 	// MARK: Body
 	var body: some View {
 		NBGrid {
-			ForEach(Array(_certificates.enumerated()), id: \.element.uuid) { index, cert in
-				_cellButton(for: cert, at: index)
+				ForEach(Array(_filteredCertificates.enumerated()), id: \.element.uuid) { index, cert in
+					_cellButton(for: cert, at: index)
+				}
 			}
-		}
-		.navigationTitle(.localized("Certificates"))
+			.navigationTitle(.localized("Certificates"))
+			.searchable(text: $_searchText, prompt: "Buscar certificado")
+			.safeAreaInset(edge: .top, spacing: 8) {
+				CertificatesOverviewCard(certificates: Array(_certificates))
+					.padding(.horizontal)
+			}
 		.overlay {
 			if _certificates.isEmpty {
 				if #available(iOS 17, *) {
@@ -60,9 +67,16 @@ struct CertificatesView: View {
 				}
 			}
 		}
-		.toolbar {
-			if _bindingSelectedCert == nil {
-				NBToolbarButton(
+			.toolbar {
+				if _bindingSelectedCert == nil {
+					NBToolbarButton(
+						systemImage: "waveform.path.ecg",
+						style: .icon,
+						placement: .topBarLeading
+					) {
+						_showDiagnostics = true
+					}
+					NBToolbarButton(
 					systemImage: "plus",
 					style: .icon,
 					placement: .topBarTrailing
@@ -74,10 +88,13 @@ struct CertificatesView: View {
 		.sheet(item: $_isSelectedInfoPresenting) { cert in
 			CertificatesInfoView(cert: cert)
 		}
-		.sheet(isPresented: $_isAddingPresenting) {
-			CertificatesAddView()
-				.presentationDetents([.medium])
-		}
+			.sheet(isPresented: $_isAddingPresenting) {
+				CertificatesAddView()
+					.presentationDetents([.medium])
+			}
+			.sheet(isPresented: $_showDiagnostics) {
+				CertificateDiagnosticsView(certificates: Array(_certificates))
+			}
 		.alert(.localized("Change Nickname"), isPresented: $_isRenamingPresenting, presenting: _certToRename) { cert in
 			TextField(.localized("Nickname"), text: $_newNickname)
 			Button(.localized("Cancel"), role: .cancel) { }
@@ -86,8 +103,17 @@ struct CertificatesView: View {
 				Storage.shared.saveContext()
 			}
 		}
+
+		}
 	}
-}
+
+	private var _filteredCertificates: [CertificatePair] {
+		guard !_searchText.isEmpty else { return Array(_certificates) }
+		return _certificates.filter { cert in
+			let decoded = Storage.shared.getProvisionFileDecoded(for: cert)
+			return (cert.nickname ?? decoded?.Name ?? "").localizedCaseInsensitiveContains(_searchText)
+		}
+	}
 
 // MARK: - View extension
 extension CertificatesView {

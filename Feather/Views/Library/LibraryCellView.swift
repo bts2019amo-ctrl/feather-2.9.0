@@ -27,6 +27,7 @@ struct LibraryCellView: View {
 	@Binding var selectedSigningAppPresenting: AnyApp?
 	@Binding var selectedInstallAppPresenting: AnyApp?
 	@Binding var selectedAppUUIDs: Set<String>
+	@State private var _confirmDelete = false
 	
 	// MARK: Selections
 	private var _isSelected: Bool {
@@ -90,16 +91,22 @@ struct LibraryCellView: View {
 				_actions(for: app)
 			}
 		}
-		.contextMenu {
-			if !isEditing {
-				_contextActions(for: app)
-				Divider()
-				_contextActionsExtra(for: app)
-				Divider()
-				_actions(for: app)
+			.contextMenu {
+				if !isEditing {
+					_contextActions(for: app)
+					Divider()
+					_contextActionsExtra(for: app)
+					Divider()
+					_actions(for: app)
+				}
+			}
+			.confirmationDialog("Excluir aplicativo?", isPresented: $_confirmDelete) {
+				Button("Excluir", role: .destructive) { Storage.shared.deleteApp(for: app) }
+				Button("Cancelar", role: .cancel) { }
+			} message: {
+				Text(app.name ?? "Este aplicativo será removido da biblioteca.")
 			}
 		}
-	}
 	
 	private var _desc: String {
 		if let version = app.version, let id = app.identifier {
@@ -114,10 +121,10 @@ struct LibraryCellView: View {
 // MARK: - Extension: View
 extension LibraryCellView {
 	@ViewBuilder
-	private func _actions(for app: AppInfoPresentable) -> some View {
-		Button(.localized("Delete"), systemImage: "trash", role: .destructive) {
-			Storage.shared.deleteApp(for: app)
-		}
+		private func _actions(for app: AppInfoPresentable) -> some View {
+			Button(.localized("Delete"), systemImage: "trash", role: .destructive) {
+				_confirmDelete = true
+			}
 	}
 	
 	@ViewBuilder
