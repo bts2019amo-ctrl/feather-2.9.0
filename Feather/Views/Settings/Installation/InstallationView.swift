@@ -22,26 +22,6 @@ struct InstallationView: View {
 		var body: some View {
 			NBList(.localized("Installation")) {
 				Section {
-					LopfinderCard(tint: LopfinderPalette.mint) {
-						HStack(spacing: 14) {
-							Image(systemName: "lock.shield.fill")
-								.font(.title2)
-								.foregroundStyle(LopfinderPalette.mint)
-								.frame(width: 42, height: 42)
-								.background(LopfinderPalette.mint.opacity(0.12), in: RoundedRectangle(cornerRadius: 13, style: .continuous))
-							VStack(alignment: .leading, spacing: 5) {
-								Text("Instalação protegida").font(.headline)
-								Text("As opções recomendadas ficam fixas para evitar falhas.").font(.caption).foregroundStyle(.secondary)
-							}
-						}
-						HStack(spacing: 8) {
-							LopfinderStatusBadge(title: "Server", systemImage: "server.rack")
-							LopfinderStatusBadge(title: "Semi Local", systemImage: "network", color: LopfinderPalette.violet)
-							LopfinderStatusBadge(title: "Localhost", systemImage: "lock.fill", color: LopfinderPalette.mint)
-						}
-					}
-				}
-				Section {
 				Picker(.localized("Installation Type"), systemImage: "arrow.down.app", selection: $_installationMethod) {
 					ForEach(_installationMethods.indices, id: \.description) { index in
 						Text(_installationMethods[index]).tag(index)

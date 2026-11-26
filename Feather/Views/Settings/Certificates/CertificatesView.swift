@@ -46,11 +46,7 @@ struct CertificatesView: View {
 			}
 			.navigationTitle(.localized("Certificates"))
 			.searchable(text: $_searchText, prompt: "Buscar certificado")
-			.safeAreaInset(edge: .top, spacing: 8) {
-				CertificatesOverviewCard(certificates: Array(_certificates))
-					.padding(.horizontal)
-			}
-		.overlay {
+			.overlay {
 			if _certificates.isEmpty {
 				if #available(iOS 17, *) {
 					ContentUnavailableView {

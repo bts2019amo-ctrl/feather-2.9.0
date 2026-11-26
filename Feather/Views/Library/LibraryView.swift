@@ -243,14 +243,6 @@ struct LibraryView: View {
 				.sheet(isPresented: $_showHistory) {
 					InstallationHistoryView(signedApps: _signedApps.map { $0 })
 				}
-				.safeAreaInset(edge: .top, spacing: 8) {
-					LibraryOverviewCard(
-						signedCount: _signedApps.count,
-						importedCount: _importedApps.count,
-						downloadCount: downloadManager.manualDownloads.count
-					)
-					.padding(.horizontal)
-				}
 				.onReceive(NotificationCenter.default.publisher(for: Notification.Name("Feather.installApp"))) { _ in
 				if let latest = _signedApps.first {
 					_selectedInstallAppPresenting = AnyApp(base: latest)
