@@ -36,11 +36,11 @@ struct DownloadHeaderView: View {
 				}
 				.transition(.move(edge: .top).combined(with: .opacity))
 			}
+			}
 			.sheet(isPresented: $_showDetails) {
 				DownloadCenterView(downloads: downloadManager.manualDownloads)
 			}
-		}
-		.animation(.spring(), value: downloadManager.manualDownloads.count)
+			.animation(.spring(), value: downloadManager.manualDownloads.count)
 	}
 }
 

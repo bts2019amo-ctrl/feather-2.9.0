@@ -102,20 +102,19 @@ struct CertificatesView: View {
 				cert.nickname = _newNickname.isEmpty ? nil : _newNickname
 				Storage.shared.saveContext()
 			}
+			}
 		}
 
-		}
-	}
-
-	private var _filteredCertificates: [CertificatePair] {
+		private var _filteredCertificates: [CertificatePair] {
 		guard !_searchText.isEmpty else { return Array(_certificates) }
 		return _certificates.filter { cert in
 			let decoded = Storage.shared.getProvisionFileDecoded(for: cert)
 			return (cert.nickname ?? decoded?.Name ?? "").localizedCaseInsensitiveContains(_searchText)
 		}
+		}
 	}
 
-// MARK: - View extension
+	// MARK: - View extension
 extension CertificatesView {
 	@ViewBuilder
 	private func _cellButton(for cert: CertificatePair, at index: Int) -> some View {
