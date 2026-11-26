@@ -29,6 +29,7 @@ struct LibraryView: View {
 		@State private var _sortOrder: SortOrder = .recent
 		@State private var _showHistory = false
 		@State private var _appToDelete: AnyApp?
+		@AppStorage("Lopfinder.compactLibrary") private var _compactLibrary = false
 	
 	
 	@Namespace private var _namespace
@@ -97,9 +98,11 @@ struct LibraryView: View {
 								selectedInfoAppPresenting: $_selectedInfoAppPresenting,
 								selectedSigningAppPresenting: $_selectedSigningAppPresenting,
 								selectedInstallAppPresenting: $_selectedInstallAppPresenting,
-								selectedAppUUIDs: $_selectedAppUUIDs
+								selectedAppUUIDs: $_selectedAppUUIDs,
+									compact: _compactLibrary
 							)
 							.compatMatchedTransitionSource(id: app.uuid ?? "", ns: _namespace)
+	.transition(.asymmetric(insertion: .opacity.combined(with: .scale(scale: 0.98)), removal: .opacity))
 						}
 					}
 				}
@@ -118,9 +121,11 @@ struct LibraryView: View {
 								selectedInfoAppPresenting: $_selectedInfoAppPresenting,
 								selectedSigningAppPresenting: $_selectedSigningAppPresenting,
 								selectedInstallAppPresenting: $_selectedInstallAppPresenting,
-								selectedAppUUIDs: $_selectedAppUUIDs
+								selectedAppUUIDs: $_selectedAppUUIDs,
+									compact: _compactLibrary
 							)
 							.compatMatchedTransitionSource(id: app.uuid ?? "", ns: _namespace)
+	.transition(.asymmetric(insertion: .opacity.combined(with: .scale(scale: 0.98)), removal: .opacity))
 						}
 					}
 				}
@@ -176,10 +181,16 @@ struct LibraryView: View {
 							Button(.localized("Sort by name"), systemImage: "textformat.abc") {
 								_sortOrder = .name
 							}
-							Button(.localized("Most recent"), systemImage: "clock") {
-								_sortOrder = .recent
-							}
-							Divider()
+								Button(.localized("Most recent"), systemImage: "clock") {
+									_sortOrder = .recent
+								}
+								Button(
+									_compactLibrary ? "Modo confortável" : "Modo compacto",
+									systemImage: _compactLibrary ? "rectangle.expand.vertical" : "rectangle.compress.vertical"
+								) {
+									_compactLibrary.toggle()
+								}
+								Divider()
 							Button(.localized("Installation history"), systemImage: "clock.arrow.circlepath") {
 								_showHistory = true
 							}
