@@ -331,7 +331,6 @@ extension LibraryView {
 			case name
 		}
 	}
-}
 
 private struct LibraryOverviewCard: View {
 	let signedCount: Int
